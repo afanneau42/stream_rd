@@ -13,7 +13,8 @@
     "express": "^4.16.2",
     "nodemon": "^1.15.1",
     "path": "^0.12.7",
-    "pug": "^2.0.0-rc.4"
+    "pug": "^2.0.0-rc.4",
+    "torrent-stream": "^1.0.3"
   },
   "devDependencies": {
     "video.js": "^6.6.3"
