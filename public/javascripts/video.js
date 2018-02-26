@@ -1,13 +1,14 @@
-// var myPlayer = videojs('my-video');
+var myPlayer = videojs('my-video');
 // myPlayer.on('play', () => {
 //     console.log(myPlayer.currentTime());
 //    })
-// myPlayer.ready(function() {
-//   // set current time to 2 minutes into the video
+myPlayer.ready(function() {
+    
+    //   // set current time to 2 minutes into the video
 
 //   // get the current time, should be 120 seconds
 //   var whereYouAt = myPlayer.currentTime();
-// });
+});
 
 // $.ajax({
 //     type: 'GET',
@@ -19,3 +20,4 @@
 //     console.log('done')
 //     // myPlayer.src([{type: "video/webm", src: data}])
 // });
+

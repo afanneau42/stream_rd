@@ -1,6 +1,7 @@
 const express = require("express")
 const path = require("path")
 const fs = require("fs")
+const mime = require("mime-types")
 
 const app = express()
 const port = 7777
@@ -14,6 +15,10 @@ app.set('view engine', 'pug')
 
 //Middlewares
 app.use('/assets', express.static('public'))
+app.use('/goinfre', express.static('/goinfre'))
+
+
+mime.lookup('.vtt')
 
 var engine = torrentStream('magnet:?xt=urn:btih:5aa6a160a7470b00e4b3d0ee824333fb7c934ca7&dn=Zenith%20(2011)%20(theora)&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Fopentor.org%3A2710&tr=udp%3A%2F%2Ftracker.ccc.de%3A80&tr=udp%3A%2F%2Ftracker.blackunicorn.xyz%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969', {
     connections: 100,
@@ -38,7 +43,6 @@ engine.on('ready', function() {
         console.log(file)        
     });
 });
-
 
 app.get('/', (req, res) => {
     res.render(pages + '/index.pug')
