@@ -1,13 +1,16 @@
 html
     header
         link(href="http://vjs.zencdn.net/6.6.3/video-js.css" rel="stylesheet")
+        script(src="https://rawgit.com/leizongmin/js-xss/master/dist/xss.js")
+        script(src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js")
         <!-- If you'd like to support IE8 -->
         script(src="http://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js")
     body
         h1 YO
-        video(id="my-video" class="video-js" controls preload="auto" width="640" height="264" poster="/assets/images/facce.jpg" data-setup="{}")
+        video(id="my-video" class="video-js" controls width="640" height="264" poster="/assets/images/facce.jpg" data-setup="{}")
             //- source(src="/Volumes/Storage/goinfre/afanneau/jo-2018-biathlon-relais-mixte-revivez-la-victoire-magique-du-relais-tricolore.mp4" type='video/mp4')
-            source(src="/assets/les-plus-grosses-attaques-de-martin-fourcade-biathlon.webm" type='video/webm')
+            source(src="http://localhost:7777/video" type='video/ogg')
             p(class="vjs-no-js") To view this video please enable JavaScript, and consider upgrading to a web browser that
                 a(href="http://videojs.com/html5-video-support/" target="_blank") supports HTML5 video
         script(src="http://vjs.zencdn.net/6.6.3/video.js")
+        script(src="/assets/javascripts/video.js")
