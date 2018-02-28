@@ -1,0 +1,91 @@
+html
+    header
+        link(href="http://vjs.zencdn.net/6.6.3/video-js.css" rel="stylesheet")
+        script(src="https://rawgit.com/leizongmin/js-xss/master/dist/xss.js")
+        script(src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js")
+        
+        script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js", integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D", crossorigin="anonymous")
+        script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js", integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl", crossorigin="anonymous")
+        link(href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm", crossorigin="anonymous")
+        
+        link(href="/assets/stylesheets/movie.css" rel="stylesheet")
+        <!-- If you'd like to support IE8 -->
+        script(src="http://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js")
+    body(style='background-color:#333').p-5
+        div.row.p-5
+            div.col-3
+            div.col-6.border(style='height: 1000px;min-width: 400px;    background-color: #444;    box-shadow: #222 0px 0px 25px;border-radisu:2px;')
+                div.row(style='height:100px;').p-3
+                    h2#title.mb-2.text-center(style="color:#EEE;font-weight:bold;").m-auto
+                div.row(style='height:400px;').px-2
+                    div.col-md-4.col-12.w-100(style='min-width:250px')
+                        img#poster.horizontal-and-vertical-centering.h-100.w-100
+                    div.col.w-100.h-100.border.border-black
+                        div.row(style="height:10%;")
+                        div.row(style="heigt:60%;")
+                            div.col-md-1.col-1
+                            div.col-md-10.col-10
+                                p#plot(style='color:#DDD;font-size:0.75em;')
+                            div.col-md-1.col-1
+                        div.row(style="height:10%;").mt-3
+                            div.col-3.h-100
+                                p#director(style='color:#CCC;font-size:0.75em;').m-auto.text-center
+                            div.col-3.h-100
+                                p#genres(style='color:#CCC;font-size:0.75em;').m-auto.text-center
+                            div.col-3.h-100
+                                p#year(style='color:#CCC;font-size:0.75em;').m-auto.text-center                            
+                            div.col-3.h-100
+                                p#runtime(style='color:#CCC;font-size:0.75em;').m-auto.text-center
+                        div.row(style='height:3em;').mt-3
+                            div.col-1
+                            div.col-2#rating-1
+                                div.row(style='height:60%').mb-0
+                                    p.mx-auto.mt-auto#rate-1(style='color:#EEE;font-weight:bold;font-size:0.75em;').mb-0
+                                div.row(style='height:10px;')   
+                                div.row
+                                    p.m-auto#rate-name-1(style='color:#BBB;font-size:0.25em;').m-auto.text-center
+                            div.col-2                   
+                            div.col-2#rating-2
+                                div.row(style='height:60%').mb-0
+                                    p.mx-auto.mt-auto#rate-2(style='color:#EEE;font-weight:bold;font-size:0.75em;').mb-0
+                                div.row(style='height:10px;')   
+                                div.row
+                                    p.m-auto#rate-name-2(style='color:#BBB;font-size:0.25em;').m-auto.text-center
+                            div.col-2                   
+                            div.col-2#rating-3      
+                                div.row(style='height:60%').mb-0
+                                    p.mx-auto.mt-auto#rate-3(style='color:#EEE;font-weight:bold;font-size:0.75em;').mb-0
+                                div.row(style='height:10px;')                                
+                                div.row
+                                    p.m-auto#rate-name-3(style='color:#CCC;font-size:0.25em;').m-auto.text-center
+                            div.col-1
+                                               
+                div.row(style='height:500px;').border
+                    div.col-12.w-100.mt-4
+                        video(id="my-video" class="video-js" controls width="800px" height="400px" poster="/assets/images/facce.jpg" data-setup="{}").m-auto
+                            //- source(src="" type='video/mp4')
+                            //- source(src="" type='video/ogg')
+                            //- <track kind="subtitles" src="/goinfre/torrent-stream/5aa6a160a7470b00e4b3d0ee824333fb7c934ca7/Zenith.Part.1.2011.Theora-VODO/Zenith.Part.1.2011.Theora-VODO.fr.vtt" srclang="fr" label="French" default>
+                            //- <track kind="subtitles" src="/goinfre/torrent-stream/5aa6a160a7470b00e4b3d0ee824333fb7c934ca7/Zenith.Part.1.2011.Theora-VODO/Zenith.Part.1.2011.Theora-VODO.en.vtt" srclang="en" label="English" default>
+                            p(class="vjs-no-js") To view this video please enable JavaScript, and consider upgrading to a web browser that
+                            a(href="http://videojs.com/html5-video-support/" target="_blank") supports HTML5 video
+            div.col-3
+            
+                //- div.m-3.col-3.border.border-dark(style='min-width:300px;height:400px;background-color:#222')
+                //- div.m-3.col-3.border.border-dark(style='min-width:300px;height:400px;background-color:#222')
+                //- div.m-3.col-3.border.border-dark(style='min-width:300px;height:400px;background-color:#222')
+                    
+                //- div.m-3.col-3.border.border-dark(style='min-width:300px;height:400px;background-color:#222')
+            
+        //- video(id="my-video" class="video-js" controls width="640" height="264" poster="/assets/images/facce.jpg" data-setup="{}")
+        //-     //- source(src="/Volumes/Storage/goinfre/afanneau/jo-2018-biathlon-relais-mixte-revivez-la-victoire-magique-du-relais-tricolore.mp4" type='video/mp4')
+        //-     source(src="http://localhost:7777/video" type='video/ogg')
+        //-     //- <track kind="subtitles" src="/goinfre/torrent-stream/5aa6a160a7470b00e4b3d0ee824333fb7c934ca7/Zenith.Part.1.2011.Theora-VODO/Zenith.Part.1.2011.Theora-VODO.fr.vtt" srclang="fr" label="French" default>
+        //-     //- <track kind="subtitles" src="/goinfre/torrent-stream/5aa6a160a7470b00e4b3d0ee824333fb7c934ca7/Zenith.Part.1.2011.Theora-VODO/Zenith.Part.1.2011.Theora-VODO.en.vtt" srclang="en" label="English" default>
+        //-     p(class="vjs-no-js") To view this video please enable JavaScript, and consider upgrading to a web browser that
+        //-         a(href="http://videojs.com/html5-video-support/" target="_blank") supports HTML5 video
+        //- script(src="http://vjs.zencdn.net/6.6.3/video.js")
+        script(src="/assets/javascripts/video.js")
+        script(src="http://vjs.zencdn.net/6.6.3/video.js")
+        script(src="/assets/javascripts/movie_page.js")
+        
