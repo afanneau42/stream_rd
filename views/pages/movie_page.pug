@@ -14,13 +14,13 @@ html
     body(style='background-color:#333').p-5
         div.row.p-5
             div.col-3
-            div.col-6.border(style='height: 1000px;min-width: 400px;    background-color: #444;    box-shadow: #222 0px 0px 25px;border-radisu:2px;')
+            div.col-6(style='height: 1000px;min-width: 400px;    background-color: #444;    box-shadow: #222 0px 0px 25px;border-radius:2px;')
                 div.row(style='height:100px;').p-3
                     h2#title.mb-2.text-center(style="color:#EEE;font-weight:bold;").m-auto
                 div.row(style='height:400px;').px-2
                     div.col-md-4.col-12.w-100(style='min-width:250px')
-                        img#poster.horizontal-and-vertical-centering.h-100.w-100
-                    div.col.w-100.h-100.border.border-black
+                        img#poster.horizontal-and-vertical-centering.h-100.w-100(style='box-shadow: #222 0px 0px 25px;border-radius:2px;')
+                    div.col.w-100.h-100
                         div.row(style="height:10%;")
                         div.row(style="heigt:60%;")
                             div.col-md-1.col-1
@@ -60,7 +60,7 @@ html
                             //-         p.m-auto#rate-name-3(style='color:#CCC;font-size:0.25em;').m-auto.text-center
                             div.col-5
                                                
-                div.row(style='height:500px;').border
+                div.row(style='height:500px;')
                     div.col-12.w-100.mt-4
                         video(id="my-video" class="video-js" controls width="800px" height="400px" poster="/assets/images/facce.jpg" data-setup="{}").m-auto
                             //- source(src="" type='video/mp4')
