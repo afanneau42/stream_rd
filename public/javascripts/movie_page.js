@@ -2,8 +2,6 @@ $(document).ready(() => {
     var myPlayer = videojs('my-video');
     myPlayer.on('play', () => {
         console.log(myPlayer.currentTime());
-    })
-    myPlayer.ready(function() {
         myPlayer.currentTime(0)
     var whereYouAt = myPlayer.currentTime();
     });
@@ -42,9 +40,14 @@ $(document).ready(() => {
         //     console.log('done')
         //     // myPlayer.src([{type: "video/mp4", src: data}])
         // });
-        myPlayer.src([{type: "video/mp4", src: '/torrent?hash='+data.data.movie.torrents[0].hash}])
-        // myPlayer.src([{type: "video/ogg", src: 'localhost:7777/video?hash='+data.data.movie.torrents[0].hash}])
-        // myPlayer.src([{type: "video/webmv", src: 'localhost:7777/video?hash='+data.data.movie.torrents[0].hash}])
-        
+        // myPlayer.src([{type: "video/ogg", src: '/torrent?hash='+data.data.movie.torrents[0].hash}])
+        // myPlayer.src([{type: "video/webmv", src: '/torrent?hash='+data.data.movie.torrents[0].hash}])
+        myPlayer.src([{type: "video/mp4", src: '/torrent?hash='+data.data.movie.torrents[0].hash}])        
+        $.get('/subtitles?imdbid=' + data.data.movie.imdb_code, (subs) => {
+            console.log(subs)
+            subs.forEach(function(element) {
+                $("#my-video").append('<track kind="captions" src="'+url+'" srclang="'+element.langcode+'" label="'+element.lang+'" default>')
+            });
+        })
     })
 })

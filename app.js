@@ -16,6 +16,8 @@ const translate = require('google-translate-api');
 
 // Set path of html/pug files
 const pages = __dirname + '/views/pages'
+// const torrent_dir = path.resolve('/goinfre')
+const torrent_dir = path.resolve('/tmp')
 
 // Set template engine
 app.set('view engine', 'pug')
@@ -29,19 +31,10 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
-
-
-
 mime.lookup('.vtt')
-
 // imdb.get('The', {apiKey: '976c2b32', timeout: 30000}).then(console.log).catch(console.log);
 
-
-
-
 app.get('/', (req, res) => {
-
-
     res.render(pages + '/index.pug')
 })
 
@@ -79,7 +72,6 @@ app.post('/search_movie', (req, res) => {
     }).catch(
         data => {res.send(['false',data])
     });
-    
 })  
 
 app.post('/movie_info', (req, res) => {
@@ -110,7 +102,7 @@ app.get('/video', (req, res) => {
         engine.files.forEach(function(file) {
             const ext = path.extname(file.name)
             if (ext === '.mp4' || ext === '.avi' || ext === '.webm' || ext === '.ogv') {
-                file_path = path.resolve('/goinfre/torrent-stream/'+req.query.hash+'/' + file.path)
+                file_path = path.resolve(torrent_dir + '/torrent-stream/'+req.query.hash+'/' + file.path)
                 file_ext = ext
             }
             else {
@@ -145,7 +137,7 @@ app.get('/video', (req, res) => {
             const file= fs.createReadStream(file_path, {start, end})
             console.log('\nSIZE FILE')
             console.log(engine.swarm.downloaded / 1000000)
-            console.log('/')        
+            console.log('/')
             console.log(total / 1000000)
             
             console.log('\nSTART BYTE')
@@ -204,10 +196,15 @@ function stream (res, file, start, end) {
 
 app.get('/torrent', (req, res) => {
     console.log('IN TORRENT')
-    const engine = torrentStream('magnet:?xt=urn:btih:' + req.query.hash, {
+    console.log('header range ')
+    if (req.headers.range)
+        console.log(req.headers.range)
+    else
+        console.log('no req range')
+        const engine = torrentStream('magnet:?xt=urn:btih:' + req.query.hash, {
         connections: 100,
         uploads: 10,
-        path: '/goinfre',
+        path: torrent_dir + '/torrent-stream',
         verify: true,
         trackers: [
             'udp://tracker.leechers-paradise.org:6969/announce',
@@ -239,8 +236,13 @@ app.get('/torrent', (req, res) => {
             const ext = path.extname(file.name)
             if (ext === '.mp4' || ext === '.ogg' || ext === '.mkv') {
                 file.select();
-                
-                let total = file.lenght;
+                engine.on('torrent', () => {
+                    console.log('FETCHED')
+                })
+                console.log('file : '  )
+                let stats = fs.statSync(torrent_dir + '/torrent-stream/' + file.path)
+                console.log(stats)
+                let total = stats["size"];
                 let start = 0;
                 let end = total - 1;
 
@@ -249,19 +251,25 @@ app.get('/torrent', (req, res) => {
                     let parts = range.replace(/bytes=/, '').split('-');
                     let newStart = parts[0];
                     let newEnd = parts[1];
+                    console.log('newEnd : ' + newEnd)
+                    console.log('total : ' + total)
+                    
+
+
                     start = parseInt(newStart, 10);
                     end = newEnd ? parseint(newEnd, 10) : total - 1;
                     let chunksize = end - start + 1;
-                    let movie_path = path.resolve('/goinfre/torrent-stream/' + req.query.hash + '/' + file.path);
-
+                    // let movie_path = path.resolve(torrent_dir + '/torrent-stream/' + req.query.hash + '/' + file.path);
+                    let movie_path = path.resolve(torrent_dir + '/torrent-stream/' + file.path);
+                    console.log(start + '   ' + end)
+                    console.log(chunksize)
                     res.writeHead(206, {
-                        'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
-                        'Accept-Ranges': 'bytes',
-                        'Content-Length': chunksize,
-                        'Content-Type': 'video/'+ ext.replace('.', ''),
-                        Connection: 'keep-alive'
+                    'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+                    'Accept-Ranges': 'bytes',
+                    'Content-Length': chunksize,
+                    'Content-Type': 'video/'+ ext.replace('.', ''),
+                    Connection: 'keep-alive'
                     });
-
                     console.log('video/'+ ext.replace('.', ''))
                     
                     console.log(movie_path)
@@ -269,8 +277,8 @@ app.get('/torrent', (req, res) => {
                     let stream = fs.createReadStream(movie_path, {
                         start: start,
                         end: end
-                    });
-                    pump(stream, res);
+                    }).pipe(res);
+                    // pump(stream, res);
                 }
                 else {
                     res.writeHead(200, {
@@ -292,6 +300,17 @@ app.get('/torrent', (req, res) => {
             }
         });
     })
+})
+
+app.get('/subtitles', (req, res) => {
+    if (req.query.imdbid) {
+        openSub.search({
+            // sublanguageid: 'fre',
+            imdbid: req.query.imdbid
+        }).then((results) => {
+            console.log(results)
+        })
+    }
 })
 
 app.listen(port, (err) => {
