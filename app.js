@@ -11,13 +11,15 @@ const app = express()
 const port = 7777
 const torrentStream = require('torrent-stream');
 const pump = require('pump');
-
 const translate = require('google-translate-api');
+var MongoClient = require("mongodb").MongoClient;
+const mongoose = require('mongoose');
+var request = require('request');
 
 // Set path of html/pug files
 const pages = __dirname + '/views/pages'
-// const torrent_dir = path.resolve('/goinfre')
-const torrent_dir = path.resolve('/tmp')
+const torrent_dir = path.resolve('/goinfre')
+// const torrent_dir = path.resolve('/tmp')
 
 // Set template engine
 app.set('view engine', 'pug')
@@ -236,62 +238,61 @@ app.get('/torrent', (req, res) => {
             const ext = path.extname(file.name)
             if (ext === '.mp4' || ext === '.ogg' || ext === '.mkv') {
                 file.select();
-                engine.on('torrent', () => {
-                    console.log('FETCHED')
-                })
-                console.log('file : '  )
-                let stats = fs.statSync(torrent_dir + '/torrent-stream/' + file.path)
-                console.log(stats)
-                let total = stats["size"];
-                let start = 0;
-                let end = total - 1;
+                // engine.on('torrent', () => {
+                    // console.log('FETCHED')
+                    console.log('file : '  )
+                    // let stats = fs.statSync(torrent_dir + '/torrent-stream/' + file.path)
+                    console.log(file.length)
+                    let total = file.length;
+                    let start = 0;
+                    let end = total - 1;
 
-                if (req.headers.range) {
-                    let range = req.headers.range;
-                    let parts = range.replace(/bytes=/, '').split('-');
-                    let newStart = parts[0];
-                    let newEnd = parts[1];
-                    console.log('newEnd : ' + newEnd)
-                    console.log('total : ' + total)
-                    
+                    if (req.headers.range) {
+                        let range = req.headers.range;
+                        console.log('req.headers.range :' + req.headers.range)
+                        let parts = range.replace(/bytes=/, '').split('-');
+                        let newStart = parts[0];
+                        let newEnd = parts[1];
+                        console.log('newEnd : ' + newEnd)
+                        console.log('total : ' + total)
 
+                        start = parseInt(newStart, 10);
+                        end = newEnd ? parseint(newEnd, 10) : total - 1;
+                        let chunksize = end - start + 1;
+                        // let movie_path = path.resolve(torrent_dir + '/torrent-stream/' + req.query.hash + '/' + file.path);
+                        let movie_path = path.resolve(torrent_dir + '/torrent-stream/' + file.path);
+                        console.log(start + '   ' + end)
+                        console.log(chunksize)
+                        res.writeHead(206, {
+                        'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+                        'Accept-Ranges': 'bytes',
+                        'Content-Length': chunksize,
+                        'Content-Type': 'video/'+ ext.replace('.', ''),
+                        Connection: 'keep-alive'
+                        });
+                        console.log('video/'+ ext.replace('.', ''))
+                        
+                        console.log(movie_path)
+                        // file.pipe(res)
+                        let stream = fs.createReadStream(movie_path, {
+                            start: start,
+                            end: end
+                        }).pipe(res);
+                        // pump(stream, res);
+                    }
+                    else {
+                        res.writeHead(200, {
+                            'Content-Length': total,
+                            'Content-Type': 'video/'+ ext.replace('.', '')
+                        });
 
-                    start = parseInt(newStart, 10);
-                    end = newEnd ? parseint(newEnd, 10) : total - 1;
-                    let chunksize = end - start + 1;
-                    // let movie_path = path.resolve(torrent_dir + '/torrent-stream/' + req.query.hash + '/' + file.path);
-                    let movie_path = path.resolve(torrent_dir + '/torrent-stream/' + file.path);
-                    console.log(start + '   ' + end)
-                    console.log(chunksize)
-                    res.writeHead(206, {
-                    'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
-                    'Accept-Ranges': 'bytes',
-                    'Content-Length': chunksize,
-                    'Content-Type': 'video/'+ ext.replace('.', ''),
-                    Connection: 'keep-alive'
-                    });
-                    console.log('video/'+ ext.replace('.', ''))
-                    
-                    console.log(movie_path)
-                    // file.pipe(res)
-                    let stream = fs.createReadStream(movie_path, {
-                        start: start,
-                        end: end
-                    }).pipe(res);
-                    // pump(stream, res);
-                }
-                else {
-                    res.writeHead(200, {
-                        'Content-Length': total,
-                        'Content-Type': 'video/'+ ext.replace('.', '')
-                    });
-
-                    let stream = fs.createReadStream(movie_path, {
-                        start: start,
-                        end: end
-                    });
-                    pump(stream, res);
-                }
+                        let stream = fs.createReadStream(movie_path, {
+                            start: start,
+                            end: end
+                        });
+                        pump(stream, res);
+                    }
+                // })                
             }
             else {
                 console.log('ext \''+ext+'\' not recognized')
@@ -316,3 +317,58 @@ app.get('/subtitles', (req, res) => {
 app.listen(port, (err) => {
     if (err) throw err
 })
+
+// MongoClient.connect("mongodb://localhost:27017", (err, client) => {
+//     if (err) throw err;
+
+//     console.log('Connected to DB tutoriel');
+//     let db = client.db('tutoriel')
+//     db.createCollection('personnages2', (err, results) => {
+//         if (err) throw err;
+
+//         console.log('here')
+//     })
+//     db.collection('personnages2').insertOne({name: 'Louis Choulage', age: 42, Location: 'Paris'}, (err, res) => {
+//         if (err) throw err;
+        
+//         console.log('document insert')
+//     })
+//     db.collection('personnages2').find({}).sort({age: -1}).toArray((err, results) => {
+//         if (err) throw err;
+
+//         console.log(results)
+//     })
+// })
+
+mongoose.connect('mongodb://localhost:27017/hypertube');
+
+// const Schema = mongoose.Schema,
+//     ObjectId = Schema.ObjectId;
+
+// const BlogPost = new Schema({
+//     author: ObjectId,
+//     title: String,
+//     body: String,
+//     date: Date
+// });
+
+const moviesCtrl = require('./controller/movies')
+
+// request('https://yifymovie.co/api/v2/list_movies.json?limit=50&page=' + 1, function (error, response, body) {
+//     console.log('error:', error); // Print the error if one occurred and handle it
+//     console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+//     // console.log(body)
+//     let ret = moviesCtrl.insertMultiple(JSON.parse(body))
+//     console.log(ret)
+//     let page = 1
+//     while (ret !== 0) {
+//         console.log('testtestst')
+//         page++;
+//         request('https://yifymovie.co/api/v2/list_movies.json?limit=50&page=' + page, function (error, response, body) {
+//             ret = moviesCtrl.insertMultiple(JSON.parse(body))
+//         })
+//     }
+// });
+moviesCtrl.initMovies()
+
+

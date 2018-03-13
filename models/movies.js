@@ -50,10 +50,11 @@ const moviesSchema = new mongoose.Schema({
     }
 })
 
-moviesSchema.pre('save', function(next) {
-    next();
-});
+// moviesSchema.pre('save', function(next) {
+    // next();
+// });
 
-const Movies = mongoose.model('User', userSchema);
+const Movies = mongoose.model('Movies', moviesSchema);
+
 
 module.exports = Movies;
