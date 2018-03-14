@@ -1,5 +1,10 @@
 const Movies = require('../models/movies');
 var request = require('request');
+var path = require('path');
+var fs = require('fs');
+var rimraf = require('rimraf');
+
+
 // const Conn = require('../setup/db');
 
 const insertMultiple = (array) => {
@@ -57,11 +62,51 @@ const initMovies = () => {
     requestNewMovies(1);
 }
 
-const updateMovies = () => {
-    
+// const updateMovies = () => {
+//  
+// }
+
+const resetTimer = (id) => {
+    Movies.findByIdAndUpdate(id, {last_watched: Date.now()}, (err, doc) => {
+        if (err) throw err;
+    })
+}
+
+const deleteOld = () => {
+    // console.log(ISODate(Date.now()))
+    let prevMonth = new Date()
+    prevMonth.setMonth(prevMonth.getMonth() - 1)
+    console.log(prevMonth)
+    Movies.find({last_watched: {$lt: prevMonth}, uploaded: 1}, (err, doc) => {
+        console.log(doc);
+        doc.forEach((e) => {
+            console.log(e.file_path)
+            if (path.resolve(e.file_path)) {
+                console.log('here')
+                rimraf(e.file_path, (err) => {
+                    if (err) throw err;
+                })
+                Movies.findByIdAndUpdate(e._id, {uploaded: 0, $unset: {file_path: ''}}, (err, doc) => {
+                    if (err) throw err;
+                });
+            }
+        })
+    });
+}
+
+const isUploaded = (id) => {
+    Movies.find({_id: id, uploaded: 1}, (err, doc) => {
+        if (doc && doc[0])
+            return true;
+        else
+            return false;
+    });
 }
 
 module.exports = {
-    insertMultiple,
-    initMovies
+    initMovies,
+    resetTimer,
+    deleteOld
 }
+
+// Fonctions pour les recherches de films, 

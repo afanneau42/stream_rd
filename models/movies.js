@@ -54,7 +54,14 @@ const moviesSchema = new mongoose.Schema({
     last_watched: {
         type: Date,
         default: Date.now
+    },
+    file_path: {
+        type: String
     }
+    // ,
+    // comments: {
+    // 
+    // }
 })
 
 // moviesSchema.pre('save', function(next) {

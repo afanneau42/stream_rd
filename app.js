@@ -15,6 +15,7 @@ const translate = require('google-translate-api');
 var MongoClient = require("mongodb").MongoClient;
 const mongoose = require('mongoose');
 var request = require('request');
+const oId = mongoose.Types.ObjectId;
 
 // Set path of html/pug files
 const pages = __dirname + '/views/pages'
@@ -369,6 +370,7 @@ const moviesCtrl = require('./controller/movies')
 //         })
 //     }
 // });
-moviesCtrl.initMovies()
 
+// moviesCtrl.initMovies()
 
+moviesCtrl.deleteOld();
