@@ -38,7 +38,10 @@ const moviesSchema = new mongoose.Schema({
         required: true
     },
     uploaded: {
-        type: Number
+        type: Number,
+        default: 0,
+        enum: [0, 1],
+        required: true
     },
     runtime: {
         type: Number,
@@ -47,6 +50,10 @@ const moviesSchema = new mongoose.Schema({
     casting: {
         type: Array,
         required: true
+    },
+    last_watched: {
+        type: Date,
+        default: Date.now
     }
 })
 
