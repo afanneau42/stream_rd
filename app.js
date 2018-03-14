@@ -373,4 +373,4 @@ const moviesCtrl = require('./controller/movies')
 
 // moviesCtrl.initMovies()
 
-moviesCtrl.deleteOld();
+moviesCtrl.getMovies('t', 2);

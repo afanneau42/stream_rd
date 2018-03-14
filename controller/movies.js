@@ -11,6 +11,7 @@ const insertMultiple = (array) => {
     if (array && array.data.movie_count > 0)
     {
         array.data.movies.forEach(e => {
+            console.log(e)
             Movies.create({title: e.title, year: e.year, genre: e.genres, torrents: e.torrents, imdb_id: e.imdb_code, rating: e.rating, cover_image: e.medium_cover_image, background_image: e.background_image, synopsis: e.description_full ? e.description_full : 'No description found', uploaded: 0, runtime: e.runtime, casting:[]}, (err, res) => {
                 if (err) throw err;
                 
@@ -103,10 +104,19 @@ const isUploaded = (id) => {
     });
 }
 
+const getMovies = (query, page) => {
+    var re = new RegExp(query,"i");
+    Movies.find({title: {$regex: re}}).limit(12).skip((page - 1) * 12).exec((err, doc) => {
+        console.log(doc)
+        return doc;
+    })
+}
+
 module.exports = {
     initMovies,
     resetTimer,
-    deleteOld
+    deleteOld,
+    getMovies
 }
 
 // Fonctions pour les recherches de films, 
