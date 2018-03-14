@@ -373,4 +373,4 @@ const moviesCtrl = require('./controller/movies')
 
 // moviesCtrl.initMovies()
 
-moviesCtrl.getMovies('t', 2);
+moviesCtrl.getMovies(1, 'title', -1, 'S', {min: 5, max: 6}, 'Western', {min: 1950, max: 2000}); // mettre filtre/sort à undefined si non voulu

@@ -12,10 +12,23 @@ const insertMultiple = (array) => {
     {
         array.data.movies.forEach(e => {
             console.log(e)
-            Movies.create({title: e.title, year: e.year, genre: e.genres, torrents: e.torrents, imdb_id: e.imdb_code, rating: e.rating, cover_image: e.medium_cover_image, background_image: e.background_image, synopsis: e.description_full ? e.description_full : 'No description found', uploaded: 0, runtime: e.runtime, casting:[]}, (err, res) => {
-                if (err) throw err;
-                
-            });
+            Movies
+                .create({
+                    title: e.title,
+                    year: e.year,
+                    genre: e.genres,
+                    torrents: e.torrents,
+                    imdb_id: e.imdb_code,
+                    rating: e.rating,
+                    cover_image: e.medium_cover_image,
+                    background_image: e.background_image,
+                    synopsis: e.description_full ? e.description_full : 'No description found',
+                    uploaded: 0,
+                    runtime: e.runtime,
+                    casting:[]
+                }, (err, res) => {
+                    if (err) throw err;
+                });
         })
         return 1
     }
@@ -68,9 +81,10 @@ const initMovies = () => {
 // }
 
 const resetTimer = (id) => {
-    Movies.findByIdAndUpdate(id, {last_watched: Date.now()}, (err, doc) => {
-        if (err) throw err;
-    })
+    Movies
+        .findByIdAndUpdate(id, {last_watched: Date.now()}, (err, doc) => {
+            if (err) throw err;
+        })
 }
 
 const deleteOld = () => {
@@ -78,38 +92,52 @@ const deleteOld = () => {
     let prevMonth = new Date()
     prevMonth.setMonth(prevMonth.getMonth() - 1)
     console.log(prevMonth)
-    Movies.find({last_watched: {$lt: prevMonth}, uploaded: 1}, (err, doc) => {
-        console.log(doc);
-        doc.forEach((e) => {
-            console.log(e.file_path)
-            if (path.resolve(e.file_path)) {
-                console.log('here')
-                rimraf(e.file_path, (err) => {
-                    if (err) throw err;
-                })
-                Movies.findByIdAndUpdate(e._id, {uploaded: 0, $unset: {file_path: ''}}, (err, doc) => {
-                    if (err) throw err;
-                });
-            }
-        })
-    });
+    Movies
+        .find({last_watched: {$lt: prevMonth}, uploaded: 1}, (err, doc) => {
+            console.log(doc);
+            doc.forEach((e) => {
+                console.log(e.file_path)
+                if (path.resolve(e.file_path)) {
+                    console.log('here')
+                    rimraf(e.file_path, (err) => {
+                        if (err) throw err;
+                    })
+                    Movies.findByIdAndUpdate(e._id, {uploaded: 0, $unset: {file_path: ''}}, (err, doc) => {
+                        if (err) throw err;
+                    });
+                }
+            })
+        });
 }
 
 const isUploaded = (id) => {
-    Movies.find({_id: id, uploaded: 1}, (err, doc) => {
-        if (doc && doc[0])
-            return true;
-        else
-            return false;
-    });
+    Movies
+        .find({_id: id, uploaded: 1}, (err, doc) => {
+            if (doc && doc[0])
+                return true;
+            else
+                return false;
+        });
 }
 
-const getMovies = (query, page) => {
-    var re = new RegExp(query,"i");
-    Movies.find({title: {$regex: re}}).limit(12).skip((page - 1) * 12).exec((err, doc) => {
-        console.log(doc)
-        return doc;
-    })
+const getMovies = (page, sort_by, sort_order, f_title, f_rating, f_genre, f_year) => {
+    var re = new RegExp(f_title,"i");
+    let sort = {};
+    sort_by ? sort[sort_by] = sort_order ? sort_order : 1 : sort['title'] = sort_order ? sort_order : 1;
+    let query = {};
+    f_title ? query.title = {$regex: re} : 0;
+    f_rating ? query.rating = {$gte: f_rating.min, $lte: f_rating.max} : 0;
+    f_genre ? query.genre = f_genre : 0
+    f_year ? query.year = {$gte: f_year.min, $lte: f_year.max} : 0;    
+    Movies
+        .find(query)
+        .limit(12)
+        .skip((page - 1) * 12)
+        .sort(sort)
+        .exec((err, doc) => {
+            console.log(doc)
+            return doc;
+        })
 }
 
 module.exports = {
