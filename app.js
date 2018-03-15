@@ -16,6 +16,7 @@ var MongoClient = require("mongodb").MongoClient;
 const mongoose = require('mongoose');
 var request = require('request');
 const oId = mongoose.Types.ObjectId;
+var ptn = require('parse-torrent-name');
 
 // Set path of html/pug files
 const pages = __dirname + '/views/pages'
@@ -46,18 +47,34 @@ app.get('/', (req, res) => {
 //   }
 app.post('/search_movie', (req, res) => {
     console.log(req.body.search)
-    imdb.search({title:req.body.search}, {apiKey: '976c2b32'
-    }).then(data => {
-        console.log(data)
+    // imdb.search({title:req.body.search}, {apiKey: '976c2b32'
+    // }).then(data => {
+        // console.log(data)
 
 //********** API PIRATE BAY **********//
-        // pirateBay.search(data.title, {
+        // pirateBay.search('', {
         //     category: 'video',
         //     orderBy: 'seeds',
         //     sortBy: 'desc'
         // }).then(results => {
         //     console.log(results)
         // })
+
+        pirateBay.topTorrents(201).then(results => {
+            // console.log(results)
+            results.forEach(e => {
+                let info = ptn(e.name)
+                imdb.search({title: info.title, year: info.year}, {apiKey: '976c2b32'
+            }).then(data => {
+                console.log('\n' + info.title)
+                console.log(data)
+            }).catch(err => {
+                if (err) throw err
+            })
+            })
+            res.send(['true', results])
+            
+        })
 //************************************//
 
 //******** API OPEN SUBTITLES ********//
@@ -71,10 +88,9 @@ app.post('/search_movie', (req, res) => {
 //************************************//
         
         // }).catch(err => {if (err) throw err})
-        res.send(['true', data])
-    }).catch(
-        data => {res.send(['false',data])
-    });
+    // }).catch(
+        // data => {res.send(['false',data])
+    // });
 })  
 
 app.post('/movie_info', (req, res) => {
@@ -372,5 +388,7 @@ const moviesCtrl = require('./controller/movies')
 // });
 
 // moviesCtrl.initMovies()
+// moviesCtrl.requestSuggest()
 
-moviesCtrl.getMovies(1, 'title', -1, 'S', {min: 5, max: 6}, 'Western', {min: 1950, max: 2000}); // mettre filtre/sort à undefined si non voulu
+// moviesCtrl.getMovies(1, 'title', -1, 'S', {min: 5, max: 6}, 'Western', {min: 1950, max: 2000}); // mettre filtre/sort à undefined si non voulu
+moviesCtrl.getMovies(1, 'suggest_pos', 1, undefined, undefined, undefined, undefined, 1) // Querry de suggestion

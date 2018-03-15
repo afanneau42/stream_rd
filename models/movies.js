@@ -19,11 +19,11 @@ const moviesSchema = new mongoose.Schema({
     },
     imdb_id: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     rating: {
         type: Number,
-        required: true        
     },
     cover_image: {
         type: String,
@@ -31,7 +31,6 @@ const moviesSchema = new mongoose.Schema({
     },
     background_image: {
         type: String,
-        required: true        
     },
     synopsis: {
         type: String,
@@ -54,6 +53,9 @@ const moviesSchema = new mongoose.Schema({
     last_watched: {
         type: Date,
         default: Date.now
+    },
+    suggest_pos: {
+        type: Number
     },
     file_path: {
         type: String

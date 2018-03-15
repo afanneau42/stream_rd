@@ -12,6 +12,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
+    "eztv-api-pt": "^1.3.1",
     "google-translate-api": "^2.3.0",
     "imdb-api": "^3.1.2",
     "mime-types": "^2.1.18",
@@ -21,6 +22,7 @@
     "npm": "^5.7.1",
     "omdb": "^0.8.0",
     "opensubtitles-api": "^4.0.0",
+    "parse-torrent-name": "^0.5.4",
     "path": "^0.12.7",
     "pug": "^2.0.0-rc.4",
     "request": "^2.85.0",
