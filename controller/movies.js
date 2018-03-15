@@ -75,37 +75,26 @@ function requestNewMovies(page) {
 }
 
 const requestSuggest = () => {
-    console.log('test')
     pirateBay.topTorrents(201)
         .then(results => {
-            // console.log(results)
             results.forEach((e, i) => {
                 let info = ptn(e.name)
-                // console.log(info.title)                
                 imdb.search({title: info.title, year: info.year}, {apiKey: '976c2b32'
                 }).then(data => {
                     if (data.results[0] && data.results[0].title && data.results[0].imdbid) {
-                        // console.log('\n' + i + ' ' + info.title)
-                        // console.log(data.results[0].title)
-                        // console.log(data.results[0].imdbid)
                         Movies
                         .find({imdb_id: data.results[0].imdbid}, (err, doc) => {
                             if (doc[0]) {
-                                console.log(data.results[0].imdbid)
                                 if (!doc[0].suggest_pos) {
                                     Movies
                                     .findByIdAndUpdate(doc[0]._id, {suggest_pos: i}, (err, doc) => {
                                         if (err) throw err;
                                     });
                                 }
-                                else {
-                                    // console.log(doc[0].title)                                    
-                                }
                             }
                             else if (!err) {
                                 imdb.getById(data.results[0].imdbid, {apiKey: '976c2b32', timeout: 30000
                                     }).then((mov) => {
-                                        // console.log(mov)
                                         Movies
                                         .create({
                                             title: mov.title,
@@ -122,30 +111,21 @@ const requestSuggest = () => {
                                             casting:[mov.director, mov.actors],
                                             suggest_pos: i
                                         }, (err, res) => {
-                                            // if (err) throw err;
                                         });
                                     }).catch(console.log);
                             }
                         })
                     }
                 }).catch(err => {
-                    // console.log(err)
-                    // if (err) throw err;
                 })
             })
         }).catch((err) => {
-            // if (err) throw err;
         })
 }
 
 const initMovies = () => {
     requestNewMovies(1);
 }
-
-
-// const updateMovies = () => {
-//  
-// }
 
 const resetTimer = (id) => {
     Movies
@@ -155,17 +135,12 @@ const resetTimer = (id) => {
 }
 
 const deleteOld = () => {
-    // console.log(ISODate(Date.now()))
     let prevMonth = new Date()
     prevMonth.setMonth(prevMonth.getMonth() - 1)
-    console.log(prevMonth)
     Movies
         .find({last_watched: {$lt: prevMonth}, uploaded: 1}, (err, doc) => {
-            console.log(doc);
             doc.forEach((e) => {
-                console.log(e.file_path)
                 if (path.resolve(e.file_path)) {
-                    console.log('here')
                     rimraf(e.file_path, (err) => {
                         if (err) throw err;
                     })
