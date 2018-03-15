@@ -38,9 +38,13 @@ app.use(bodyParser.json());
 mime.lookup('.vtt')
 // imdb.get('The', {apiKey: '976c2b32', timeout: 30000}).then(console.log).catch(console.log);
 
+const routes = require('./routes')
+app.use('/api', routes)
+
 app.get('/', (req, res) => {
     res.render(pages + '/index.pug')
 })
+
 
 // function sleep(ms) {
 //     return new Promise(resolve => setTimeout(resolve, ms));
@@ -391,4 +395,4 @@ const moviesCtrl = require('./controller/movies')
 // moviesCtrl.requestSuggest()
 
 // moviesCtrl.getMovies(1, 'title', -1, 'S', {min: 5, max: 6}, 'Western', {min: 1950, max: 2000}); // mettre filtre/sort à undefined si non voulu
-moviesCtrl.getMovies(1, 'suggest_pos', 1, undefined, undefined, undefined, undefined, 1) // Querry de suggestion
+// moviesCtrl.getMovies(1, 'suggest_pos', 1, undefined, undefined, undefined, undefined, 1) // Querry de suggestion

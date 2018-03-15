@@ -163,7 +163,11 @@ const isUploaded = (id) => {
         });
 }
 
-const getMovies = (page, sort_by, sort_order, f_title, f_rating, f_genre, f_year, f_suggest) => {
+//page, sort_by, sort_order, f_title, f_rating, f_genre, f_year, f_suggest
+
+const getMovies = (req, res) => {
+    let {page, sort_by, sort_order, f_title, f_rating, f_genre, f_year, f_suggest} = req.query
+    console.log(page)
     var re = new RegExp(f_title,"i");
     let sort = {};
     sort_by ? sort[sort_by] = sort_order ? sort_order : 1 : sort['title'] = sort_order ? sort_order : 1;
@@ -179,9 +183,14 @@ const getMovies = (page, sort_by, sort_order, f_title, f_rating, f_genre, f_year
         .skip((page - 1) * 12)
         .sort(sort)
         .exec((err, doc) => {
-            console.log(doc)
-            return doc;
+            // console.log(doc)
+            res.send(doc);
         })
+}
+
+const test = (req, res) => {
+    console.log(req.query)
+    res.send()
 }
 
 module.exports = {
@@ -189,7 +198,8 @@ module.exports = {
     requestSuggest,    
     resetTimer,
     deleteOld,
-    getMovies
+    getMovies,
+    test
 }
 
 // Fonctions pour les recherches de films, 
