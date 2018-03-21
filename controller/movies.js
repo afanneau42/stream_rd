@@ -6,6 +6,8 @@ var rimraf = require('rimraf');
 const imdb = require('imdb-api')
 const pirateBay = require('thepiratebay')
 var ptn = require('parse-torrent-name');
+const mongoose = require('mongoose');
+const oId = mongoose.Types.ObjectId;
 
 const insertMultiple = (array) => {
     if (array && array.data.movie_count > 0)
@@ -191,6 +193,28 @@ const getMovies = (req, res) => {
         })
 }
 
+const getMovieById = (req, res) => {
+    let {id} = req.query;
+    Movies
+        .find({_id: oId(id)})
+        .exec((err, doc) => {
+            if (doc[0].casting[0])
+                res.send(doc)
+            else {
+                imdb.getById(doc[0].imdb_id, {apiKey: '976c2b32', timeout: 30000
+                }).then((mov) => {
+                    Movies
+                    .findByIdAndUpdate(oId(doc[0]._id), {casting:[mov.director, mov.actors], synopsis: mov.plot ? mov.plot : 'No description found'}, (err, doc) => {
+                        if (err) throw err;
+                        res.send(doc);
+                    });
+                }).catch((err) => {
+                    if (err) throw err;
+                })
+            }
+        })
+}
+
 const test = (req, res) => {
     console.log(req.query)
     res.send()
@@ -202,7 +226,7 @@ module.exports = {
     resetTimer,
     deleteOld,
     getMovies,
-    test
+    getMovieById 
 }
 
 // Fonctions pour les recherches de films, 
