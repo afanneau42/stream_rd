@@ -195,10 +195,17 @@ const getMovies = (req, res) => {
 
 const getMovieById = (req, res) => {
     let {id} = req.query;
+    var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+    if (!checkForHexRegExp.test(id)) {
+        res.send('wrong id format')
+        return;
+    }
     Movies
         .find({_id: oId(id)})
         .exec((err, doc) => {
-            if (doc[0].casting[0])
+            if (!doc[0])
+                res.send('wrong id')            
+            else if (doc[0].casting[0])
                 res.send(doc)
             else {
                 imdb.getById(doc[0].imdb_id, {apiKey: '976c2b32', timeout: 30000
