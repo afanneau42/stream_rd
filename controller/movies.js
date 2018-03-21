@@ -29,7 +29,7 @@ const insertMultiple = (array) => {
                     runtime: e.runtime,
                     casting:[]
                 }, (err, res) => {
-                    if (err) throw err;
+                    // if (err) throw err;
                 });
         })
         return 1
@@ -210,8 +210,9 @@ const getMovieById = (req, res) => {
             else {
                 imdb.getById(doc[0].imdb_id, {apiKey: '976c2b32', timeout: 30000
                 }).then((mov) => {
+                    let rating = !doc[0].rating ? mov.rating ? mov.rating : 0 : doc[0].rating;
                     Movies
-                    .findByIdAndUpdate(oId(doc[0]._id), {casting:[mov.director, mov.actors], synopsis: mov.plot ? mov.plot : 'No description found'}, (err, doc) => {
+                    .findByIdAndUpdate(oId(doc[0]._id), {casting:[mov.director, mov.actors], synopsis: mov.plot ? mov.plot : 'No description found', rating}, (err, doc) => {
                         if (err) throw err;
                         res.send(doc[0]);
                     });

@@ -68,13 +68,14 @@ function search(val) {
     //     }
     // })
     $.post('/search_movie', {search:$('#searchMovie').val()}, (data) => {
-    console.log(data)
+    // console.log(data)
     if (data[0] === 'false')
         document.getElementById('return_search').innerHTML = data[1].message
     else {
         $('#movie_container').empty()
         console.log(data[1])
-        data[1].results.forEach((movie) => {
+        data[1].forEach((movie) => {
+            console.log(movie)
             if (movie.imdbid != prev_id && movie.poster !== 'N/A' && !movie.poster.match('\^http:\/\/ia.media-imdb.com')) { // We check if there is a poster and if it's not ia.media-imdb.com because of copyright issues 
                 // $.get(movie.poster)
                 // .done(function() {
