@@ -197,14 +197,14 @@ const getMovieById = (req, res) => {
     let {id} = req.query;
     var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
     if (!checkForHexRegExp.test(id)) {
-        res.send('wrong id format')
+        res.send({error: 'wrong id format'})
         return;
     }
     Movies
         .find({_id: oId(id)})
         .exec((err, doc) => {
             if (!doc[0])
-                res.send('wrong id')            
+                res.send({error: 'wrong id'})            
             else if (doc[0].casting[0])
                 res.send(doc[0])
             else {
