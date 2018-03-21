@@ -124,7 +124,10 @@ const requestSuggest = () => {
 }
 
 const initMovies = () => {
-    requestNewMovies(1);
+    Movies.find((err, docs) => {
+        if (!docs[0])
+            requestNewMovies(1);
+    })
 }
 
 const resetTimer = (id) => {
@@ -183,7 +186,7 @@ const getMovies = (req, res) => {
         .skip((page - 1) * 12)
         .sort(sort)
         .exec((err, doc) => {
-            // console.log(doc)
+            console.log(doc)
             res.send(doc);
         })
 }
