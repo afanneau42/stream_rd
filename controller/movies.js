@@ -206,14 +206,14 @@ const getMovieById = (req, res) => {
             if (!doc[0])
                 res.send('wrong id')            
             else if (doc[0].casting[0])
-                res.send(doc)
+                res.send(doc[0])
             else {
                 imdb.getById(doc[0].imdb_id, {apiKey: '976c2b32', timeout: 30000
                 }).then((mov) => {
                     Movies
                     .findByIdAndUpdate(oId(doc[0]._id), {casting:[mov.director, mov.actors], synopsis: mov.plot ? mov.plot : 'No description found'}, (err, doc) => {
                         if (err) throw err;
-                        res.send(doc);
+                        res.send(doc[0]);
                     });
                 }).catch((err) => {
                     if (err) throw err;
