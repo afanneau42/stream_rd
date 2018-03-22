@@ -97,6 +97,8 @@ const requestSuggest = () => {
                             else if (!err) {
                                 imdb.getById(data.results[0].imdbid, {apiKey: '976c2b32', timeout: 30000
                                     }).then((mov) => {
+                                        const reg = new RegExp('^' + 'https://ia.media-imdb.com/');
+                                        if (mov && !reg.test(mov.poster))
                                         Movies
                                         .create({
                                             title: mov.title,
