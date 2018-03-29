@@ -11,7 +11,7 @@ const insertMultiple = (array) => {
     if (array && array.data.movie_count > 0)
     {
         array.data.movies.forEach(e => {
-            console.log(e)
+            // console.log(e)
             Movies
                 .create({
                     title: e.title,
@@ -63,9 +63,9 @@ const insertMultiple2 = (array) => {
 }
 
 function requestNewMovies(page) {
-    console.log('page:' + page);
     request('https://yifymovie.co/api/v2/list_movies.json?limit=50&page=' + page, function (error, response, body) {
         let parsed_body = JSON.parse(body)    
+        console.log('Progress: ' + parseInt((page / (parsed_body.data.movie_count/50)) * 100) + '%');
         if (insertMultiple(parsed_body) !== 0)
             if (parsed_body.data.movies[0])
                 requestNewMovies(page + 1)
@@ -75,9 +75,12 @@ function requestNewMovies(page) {
 }
 
 const requestSuggest = () => {
+    console.log('Initialization of the suggest list')
     pirateBay.topTorrents(201)
         .then(results => {
+            console.log(results)
             results.forEach((e, i) => {
+                console.log(i)
                 let info = ptn(e.name)
                 imdb.search({title: info.title, year: info.year}, {apiKey: '976c2b32'
                 }).then(data => {
@@ -119,6 +122,8 @@ const requestSuggest = () => {
                 }).catch(err => {
                 })
             })
+        }).then(() => {
+            console.log('Initialization finished')
         }).catch((err) => {
         })
 }
@@ -166,16 +171,16 @@ const isUploaded = (id) => {
 //page, sort_by, sort_order, f_title, f_rating, f_genre, f_year, f_suggest
 
 const getMovies = (req, res) => {
-    let {page, sort_by, sort_order, f_title, f_rating, f_genre, f_year, f_suggest} = req.query
+    let {page, sort_by, sort_order, f_title, f_rating_min, f_rating_max, f_genre, f_year_min, f_year_max, f_suggest} = req.query
     console.log(page)
     var re = new RegExp(f_title,"i");
     let sort = {};
     sort_by ? sort[sort_by] = sort_order ? sort_order : 1 : sort['title'] = sort_order ? sort_order : 1;
     let query = {};
     f_title ? query.title = {$regex: re} : 0;
-    f_rating ? query.rating = {$gte: f_rating.min, $lte: f_rating.max} : 0;
+    f_rating_min && f_rating_max ? query.rating = {$gte: f_rating_min, $lte: f_rating_max} : 0;
     f_genre ? query.genre = f_genre : 0
-    f_year ? query.year = {$gte: f_year.min, $lte: f_year.max} : 0;
+    f_year_min && f_year_max ? query.year = {$gte: f_year_min, $lte: f_year_max} : 0;
     f_suggest ? query.suggest_pos = {$exists: true} : 0
     Movies
         .find(query)

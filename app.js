@@ -392,7 +392,7 @@ const moviesCtrl = require('./controller/movies')
 // });
 
 // moviesCtrl.initMovies()
-// moviesCtrl.requestSuggest()
+moviesCtrl.requestSuggest()
 
 // moviesCtrl.getMovies(1, 'title', -1, 'S', {min: 5, max: 6}, 'Western', {min: 1950, max: 2000}); // mettre filtre/sort à undefined si non voulu
 // moviesCtrl.getMovies(1, 'suggest_pos', 1, undefined, undefined, undefined, undefined, 1) // Querry de suggestion
