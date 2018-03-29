@@ -6,6 +6,8 @@ var rimraf = require('rimraf');
 const imdb = require('imdb-api')
 const pirateBay = require('thepiratebay')
 var ptn = require('parse-torrent-name');
+const mongoose = require('mongoose');
+const oId = mongoose.Types.ObjectId;
 
 const insertMultiple = (array) => {
     if (array && array.data.movie_count > 0)
@@ -27,7 +29,7 @@ const insertMultiple = (array) => {
                     runtime: e.runtime,
                     casting:[]
                 }, (err, res) => {
-                    if (err) throw err;
+                    // if (err) throw err;
                 });
         })
         return 1
@@ -98,6 +100,8 @@ const requestSuggest = () => {
                             else if (!err) {
                                 imdb.getById(data.results[0].imdbid, {apiKey: '976c2b32', timeout: 30000
                                     }).then((mov) => {
+                                        const reg = new RegExp('^' + 'https://ia.media-imdb.com/');
+                                        if (mov && !reg.test(mov.poster) && mov.rating)
                                         Movies
                                         .create({
                                             title: mov.title,
@@ -129,7 +133,10 @@ const requestSuggest = () => {
 }
 
 const initMovies = () => {
-    requestNewMovies(1);
+    Movies.find((err, docs) => {
+        if (!docs[0])
+            requestNewMovies(1);
+    })
 }
 
 const resetTimer = (id) => {
@@ -188,8 +195,38 @@ const getMovies = (req, res) => {
         .skip((page - 1) * 12)
         .sort(sort)
         .exec((err, doc) => {
-            // console.log(doc)
+            console.log(doc)
             res.send(doc);
+        })
+}
+
+const getMovieById = (req, res) => {
+    let {id} = req.query;
+    var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+    if (!checkForHexRegExp.test(id)) {
+        res.send({error: 'wrong id format'})
+        return;
+    }
+    Movies
+        .find({_id: oId(id)})
+        .exec((err, doc) => {
+            if (!doc[0])
+                res.send({error: 'wrong id'})            
+            else if (doc[0].casting[0])
+                res.send(doc[0])
+            else {
+                imdb.getById(doc[0].imdb_id, {apiKey: '976c2b32', timeout: 30000
+                }).then((mov) => {
+                    let rating = !doc[0].rating ? mov.rating ? mov.rating : 0 : doc[0].rating;
+                    Movies
+                    .findByIdAndUpdate(oId(doc[0]._id), {casting:[mov.director, mov.actors], synopsis: mov.plot ? mov.plot : 'No description found', rating}, (err, doc) => {
+                        if (err) throw err;
+                        res.send(doc[0]);
+                    });
+                }).catch((err) => {
+                    if (err) throw err;
+                })
+            }
         })
 }
 
@@ -204,7 +241,7 @@ module.exports = {
     resetTimer,
     deleteOld,
     getMovies,
-    test
+    getMovieById 
 }
 
 // Fonctions pour les recherches de films, 

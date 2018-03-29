@@ -17,6 +17,7 @@ const mongoose = require('mongoose');
 var request = require('request');
 const oId = mongoose.Types.ObjectId;
 var ptn = require('parse-torrent-name');
+const cors = require('cors');
 
 // Set path of html/pug files
 const pages = __dirname + '/views/pages'
@@ -29,6 +30,7 @@ app.set('view engine', 'pug')
 //Middlewares
 app.use('/assets', express.static('public'))
 app.use('/goinfre', express.static('/goinfre'))
+app.use(cors( ));
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -391,8 +393,7 @@ const moviesCtrl = require('./controller/movies')
 //     }
 // });
 
-// moviesCtrl.initMovies()
-moviesCtrl.requestSuggest()
+moviesCtrl.initMovies()
 
 // moviesCtrl.getMovies(1, 'title', -1, 'S', {min: 5, max: 6}, 'Western', {min: 1950, max: 2000}); // mettre filtre/sort à undefined si non voulu
 // moviesCtrl.getMovies(1, 'suggest_pos', 1, undefined, undefined, undefined, undefined, 1) // Querry de suggestion
