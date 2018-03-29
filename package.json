@@ -31,7 +31,8 @@
     "srt-to-vtt": "^1.1.1",
     "thepiratebay": "^1.4.6",
     "torrent-search-api": "^1.0.27",
-    "torrent-stream": "^1.0.3"
+    "torrent-stream": "^1.0.3",
+    "translate": "^1.0.2"
   },
   "devDependencies": {
     "video.js": "^6.6.3"
